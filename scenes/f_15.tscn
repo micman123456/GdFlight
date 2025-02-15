@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://ct3ysx8cm5a0m"]
+
+[ext_resource type="PackedScene" uid="uid://b5b5udqlt0pm3" path="res://entites/aircraft/f15.glb" id="1_tmhe5"]
+[ext_resource type="Script" path="res://f_15.gd" id="2_1pd5w"]
+
+[node name="f15" instance=ExtResource("1_tmhe5")]
+script = ExtResource("2_1pd5w")
+
+[node name="LeftAileron" parent="." index="6"]
+transform = Transform3D(0.907777, 0.419452, -1.83348e-08, 0, -4.37114e-08, -1, -0.419452, 0.907777, -3.96802e-08, -4.76966, 0.158952, 2.09523)
+
+[node name="RightAileron" parent="." index="7"]
+transform = Transform3D(0.907777, -0.419452, 1.83348e-08, 0, -4.37114e-08, -1, 0.419452, 0.907777, -3.96802e-08, 4.76966, 0.158952, 2.09523)
+
+[node name="LeftElevator" parent="." index="10"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -1.87268, 0.0512881, 5.33057)
+
+[node name="LeftRudder" parent="." index="13"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -1.65576, 1.20597, 5.06402)

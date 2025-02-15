@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://pjw6827qwif6"]
+
+[ext_resource type="Script" path="res://scenes/camera_3d.gd" id="1_041cc"]
+[ext_resource type="PackedScene" uid="uid://df1ooq447wnh1" path="res://models/airplane.glb" id="1_uqq8o"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wimll"]
+sky_top_color = Color(0.10037, 0.388228, 0.965086, 1)
+sky_horizon_color = Color(0.552349, 0.644733, 0.791226, 1)
+ground_bottom_color = Color(0.109028, 0.190703, 0.199818, 1)
+ground_horizon_color = Color(0.552349, 0.644733, 0.791226, 1)
+
+[sub_resource type="Sky" id="Sky_nw7hi"]
+sky_material = SubResource("ProceduralSkyMaterial_wimll")
+
+[sub_resource type="Environment" id="Environment_jj5we"]
+background_mode = 2
+sky = SubResource("Sky_nw7hi")
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h3lx0"]
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_jj5we")
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="Scene" type="Node3D" parent="World"]
+
+[node name="Area3D" type="Area3D" parent="World/Scene"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="World/Scene/Area3D"]
+transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Scene/Area3D"]
+transform = Transform3D(100, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0)
+shape = SubResource("BoxShape3D_h3lx0")
+
+[node name="Camera3D" type="Camera3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 300.612, 300.005)
+script = ExtResource("1_041cc")
+
+[node name="airplane" parent="World/Camera3D" instance=ExtResource("1_uqq8o")]
+transform = Transform3D(0.1, 0, 0, 0, -4.37114e-09, 0.1, 0, -0.1, -4.37114e-09, 0, -60, -130)

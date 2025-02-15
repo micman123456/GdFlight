@@ -1,0 +1,67 @@
+[gd_scene load_steps=10 format=3 uid="uid://ekr8uo8rj0xu"]
+
+[ext_resource type="PackedScene" uid="uid://ct3ysx8cm5a0m" path="res://scenes/f_15.tscn" id="1_k6fjo"]
+[ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
+[ext_resource type="Script" path="res://scenes/aircraft_body.gd" id="2_n4e30"]
+[ext_resource type="Script" path="res://scenes/camera_gimble.gd" id="4_fwx6w"]
+
+[sub_resource type="Curve" id="Curve_r3si5"]
+min_value = -1.0
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.25, -1), 0.0, 0.0, 0, 0, Vector2(0.451613, -0.032967), 14.3077, 14.3077, 0, 0, Vector2(0.75, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6e71m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bqghx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vbahg"]
+
+[sub_resource type="GDScript" id="GDScript_7xrac"]
+script/source = "extends Camera3D
+
+
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="AircraftController" type="Node3D"]
+script = ExtResource("1_oyw4e")
+
+[node name="AircraftBody" type="RigidBody3D" parent="."]
+mass = 5000.0
+script = ExtResource("2_n4e30")
+LiftCurve = SubResource("Curve_r3si5")
+LiftPower = 10.0
+flaps_lift_power = 10.0
+flaps_aoa_bias = 10
+drag_coeff = 0.02
+YawPower = 1.0
+LiftDragParam = 0.002
+YawDragParam = 0.02
+
+[node name="f15" parent="AircraftBody" instance=ExtResource("1_k6fjo")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AircraftBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, -8.156)
+shape = SubResource("CapsuleShape3D_6e71m")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="AircraftBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_bqghx")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="AircraftBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_vbahg")
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="AircraftBody"]
+transform = Transform3D(1.5, 0, 0, 0, -6.55671e-08, 1.5, 0, -1.5, -6.55671e-08, 0, 0, 0)
+polygon = PackedVector2Array(-1.92111, -3.87787, -1.83137, 6.67976, 1.97495, 6.72965, 2.03183, -3.9063)
+
+[node name="CameraGimble" type="Node3D" parent="AircraftBody"]
+script = ExtResource("4_fwx6w")
+
+[node name="Camera3D" type="Camera3D" parent="AircraftBody/CameraGimble"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 4, 12)
+script = SubResource("GDScript_7xrac")
+
+[editable path="AircraftBody/f15"]

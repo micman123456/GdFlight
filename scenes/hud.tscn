@@ -1,0 +1,264 @@
+[gd_scene load_steps=7 format=3 uid="uid://im5d68hujwed"]
+
+[ext_resource type="PackedScene" uid="uid://byq4hx4xl7cyc" path="res://scenes/joystick.tscn" id="1_4co71"]
+[ext_resource type="Texture2D" uid="uid://cliufksdtl5al" path="res://entites/hud_elements/HUD/tick_small.png" id="3_i6c3i"]
+[ext_resource type="Texture2D" uid="uid://c584mqrjrfofd" path="res://entites/hud_elements/HUD/throttle_meter.png" id="3_jmnqx"]
+[ext_resource type="Texture2D" uid="uid://dn45x5karvfdh" path="res://entites/hud_elements/HUD/arrow.png" id="4_5olpx"]
+[ext_resource type="Texture2D" uid="uid://bdxd5lecgvm77" path="res://entites/hud_elements/HUD/boresight.png" id="5_pkp55"]
+[ext_resource type="Texture2D" uid="uid://bc3yhqespdpli" path="res://entites/hud_elements/HUD/velocity_marker.png" id="6_we2rh"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Joystick" parent="MarginContainer" instance=ExtResource("1_4co71")]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+position = Vector2(-225, -225)
+scale = Vector2(0.4, 0.4)
+
+[node name="SpeedCont" type="HBoxContainer" parent="."]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.462191
+anchor_right = 1.0
+anchor_bottom = 0.500772
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 370
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Speed" type="Label" parent="SpeedCont"]
+layout_mode = 2
+text = "SPEED"
+
+[node name="Empty" type="Label" parent="SpeedCont"]
+layout_mode = 2
+text = "
+"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.5
+offset_top = -11.5
+offset_right = 150.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 300
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+
+[node name="ThrottleMeter" type="Sprite2D" parent="HBoxContainer2/Label"]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_jmnqx")
+
+[node name="Alt" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+text = "
+"
+
+[node name="ThrottleMeter2" type="Sprite2D" parent="HBoxContainer2/Alt"]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+rotation = 3.14159
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_jmnqx")
+
+[node name="Alt_Con" type="HBoxContainer" parent="."]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.473765
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -19.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 370
+alignment = 1
+
+[node name="Empty" type="Label" parent="Alt_Con"]
+layout_mode = 2
+text = "
+"
+
+[node name="Alt" type="Label" parent="Alt_Con"]
+layout_mode = 2
+text = "SPEED
+"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 109.5
+offset_bottom = 132.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 277
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer3"]
+layout_mode = 2
+
+[node name="Throttle_Left" type="Sprite2D" parent="HBoxContainer3/Label"]
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+scale = Vector2(0.25, 0.1)
+texture = ExtResource("3_i6c3i")
+
+[node name="Label2" type="Label" parent="HBoxContainer3"]
+layout_mode = 2
+text = "
+"
+
+[node name="Throttle_Right" type="Sprite2D" parent="HBoxContainer3/Label2"]
+visible = false
+scale = Vector2(0.25, 0.1)
+texture = ExtResource("3_i6c3i")
+
+[node name="Compass" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.502
+anchor_top = 0.5
+anchor_right = 0.502
+anchor_bottom = 0.5
+offset_left = -23.304
+offset_top = -163.0
+offset_right = 22.696
+offset_bottom = -123.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 90
+
+[node name="compass_label_l2" type="Label" parent="Compass"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "
+"
+horizontal_alignment = 2
+
+[node name="TickSmall" type="Sprite2D" parent="Compass/compass_label_l2"]
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+position = Vector2(6, -6)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_i6c3i")
+
+[node name="compass_label_l1" type="Label" parent="Compass"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "
+"
+horizontal_alignment = 2
+
+[node name="TickSmall" type="Sprite2D" parent="Compass/compass_label_l1"]
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+position = Vector2(6, -6)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_i6c3i")
+
+[node name="compass_label" type="Label" parent="Compass"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "N
+"
+horizontal_alignment = 2
+
+[node name="TickSmall" type="Sprite2D" parent="Compass/compass_label"]
+visible = false
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+position = Vector2(6, -6)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_i6c3i")
+
+[node name="Arrow" type="Sprite2D" parent="Compass/compass_label"]
+modulate = Color(0.18236, 0.97, 0.1552, 1)
+position = Vector2(6, -18)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("4_5olpx")
+
+[node name="compass_label_r1" type="Label" parent="Compass"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "
+"
+horizontal_alignment = 2
+
+[node name="TickSmall" type="Sprite2D" parent="Compass/compass_label_r1"]
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+position = Vector2(6, -6)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_i6c3i")
+
+[node name="compass_label_r2" type="Label" parent="Compass"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "
+"
+horizontal_alignment = 2
+
+[node name="TickSmall" type="Sprite2D" parent="Compass/compass_label_r2"]
+modulate = Color(0.184314, 0.968627, 0.156863, 0.788235)
+position = Vector2(6, -6)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("3_i6c3i")
+
+[node name="Heading" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+
+[node name="Borescrope_Cont" type="HBoxContainer" parent="."]
+modulate = Color(0.184314, 0.968627, 0.156863, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Boresight" type="Sprite2D" parent="Borescrope_Cont"]
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("5_pkp55")
+
+[node name="VelocityVector" type="Sprite2D" parent="."]
+modulate = Color(0.184314, 0.968627, 0.156863, 1)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_we2rh")

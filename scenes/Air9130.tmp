@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://ekr8uo8rj0xu"]
+
+[ext_resource type="PackedScene" uid="uid://ct3ysx8cm5a0m" path="res://scenes/f_15.tscn" id="1_k6fjo"]
+[ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w5vsp"]
+
+[node name="AircraftController" type="Node3D"]
+script = ExtResource("1_oyw4e")
+ailerons_range = null
+rudder_range = null
+elevator_range = null
+flaps_range = null
+flaps_setting = null
+throttle_setting = null
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 4, 12)
+
+[node name="AircraftBody" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0157375, 0, 0.0466309)
+mass = 20.41
+
+[node name="f15" parent="AircraftBody" instance=ExtResource("1_k6fjo")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AircraftBody"]
+shape = SubResource("BoxShape3D_w5vsp")

@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://ypcc38fr8o4t"]
+
+[ext_resource type="PackedScene" uid="uid://ekr8uo8rj0xu" path="res://scenes/Aircraft.tscn" id="1_eo3la"]
+[ext_resource type="PackedScene" uid="uid://xrrfsubmbti7" path="res://data_dir/terrain.tscn" id="2_nph3k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wbs0j"]
+size = Vector3(406.413, 0.5, 15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3w3dh"]
+albedo_color = Color(0.140447, 0.140447, 0.140447, 1)
+
+[node name="World" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.1302, 0)
+
+[node name="AircraftController" parent="." instance=ExtResource("1_eo3la")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -768.177, 14.4769, 14.9449)
+
+[node name="Node3D" parent="." instance=ExtResource("2_nph3k")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -699.918, 10.8335, 14.8971)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 129.058, 1.42004, 0)
+shape = SubResource("BoxShape3D_wbs0j")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 124.474, 1.43112, -0.0100098)
+size = Vector3(404.63, 0.5, 15)
+material = SubResource("StandardMaterial3D_3w3dh")

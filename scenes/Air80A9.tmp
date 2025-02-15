@@ -1,0 +1,292 @@
+[gd_scene load_steps=28 format=3 uid="uid://ekr8uo8rj0xu"]
+
+[ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/Aircraft/Aircraft.gd" id="2_aeuav"]
+[ext_resource type="PackedScene" uid="uid://vvpavsm26ah3" path="res://scenes/f_15_black.tscn" id="3_8r468"]
+[ext_resource type="Script" path="res://scenes/camera_gimble.gd" id="4_fwx6w"]
+[ext_resource type="Script" path="res://scenes/f_15.gd" id="4_gl2gx"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlEngine.gd" id="5_e5cr5"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Engine/Engine.gd" id="5_uoviv"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/EnergyContainer/EnergyContainer.gd" id="7_fnpwn"]
+[ext_resource type="AudioStream" uid="uid://x63i5rp6wgvb" path="res://entites/aircraft/sounds/idle.ogg" id="7_jnvq8"]
+[ext_resource type="AudioStream" uid="uid://bstox26qivynk" path="res://entites/aircraft/sounds/start_up.ogg" id="8_0t5uk"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlEnergyContainer.gd" id="8_840ax"]
+[ext_resource type="AudioStream" uid="uid://ppoonxht2xnk" path="res://entites/aircraft/sounds/low_power.ogg" id="9_7jmpm"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlSteering.gd" id="10_jj6sy"]
+[ext_resource type="AudioStream" uid="uid://24qsdmo7qbdt" path="res://entites/aircraft/sounds/mid_power.ogg" id="10_y7yxa"]
+[ext_resource type="Script" path="res://scenes/hud.gd" id="11_160yp"]
+[ext_resource type="PackedScene" uid="uid://byq4hx4xl7cyc" path="res://scenes/joystick.tscn" id="11_d8jlw"]
+[ext_resource type="AudioStream" uid="uid://cqgwfk4scg5lr" path="res://entites/aircraft/sounds/high_power.ogg" id="11_iijlg"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Steering/Steering.gd" id="11_u5c3s"]
+
+[sub_resource type="GDScript" id="GDScript_7xrac"]
+script/source = "extends Camera3D
+
+@export var response_strength: float = 0.1  # Adjusts camera movement sensitivity
+@export var smooth_factor: float = 5.0  # Controls smoothness of movement
+@export var max_offset: Vector3 = Vector3(0.2, 0.1, 0.3)  # Limits movement in X, Y, Z (world space)
+@export var acceleration_threshold: float = 0.2  # Minimum acceleration before affecting the camera
+
+var velocity: Vector3 = Vector3.ZERO 
+var target_offset: Vector3 = Vector3.ZERO  
+var expected_position: Vector3  
+var i = 0
+
+@onready var aircraft = $\"../../\"  
+@onready var gimbal = $\"..\"
+@onready var control = $\"../../AircraftModule_ControlSteering\"
+
+func _ready():
+	expected_position = gimbal.global_position + gimbal.global_transform.basis * Vector3(0, 7, 20)  # Use world basis
+
+func _process(delta: float) -> void:
+	pass
+	#if not aircraft or not gimbal:
+		#return
+		#
+	#var pitch_movement = control.axis_x
+	#var yaw_movement = control.axis_y
+#
+	#expected_position = gimbal.global_position + gimbal.global_transform.basis * Vector3(0, 7, 20)
+#
+	## Get aircraft velocity and acceleration
+	#var current_velocity = aircraft.linear_velocity
+	#var acceleration = (current_velocity - velocity) / delta
+	#velocity = current_velocity
+	#
+#
+	## Check if acceleration is above threshold, if not, return to expected position
+	#if acceleration.length() < acceleration_threshold:
+		#
+		#target_offset = target_offset.lerp(Vector3.ZERO, delta * smooth_factor * 2)
+		 #
+	#else:
+		#
+		#target_offset = Vector3.ZERO
+#
+		## Move forward/backward based on acceleration (Z-axis in world space)
+		#target_offset += aircraft.global_transform.basis.z * (acceleration.z * response_strength)
+		#
+		## Move left/right based on yaw momentum (X-axis in world space)
+		#target_offset += aircraft.global_transform.basis.x * (-acceleration.x * response_strength * 5)
+#
+		## Move up/down slightly based on pitch momentum (Y-axis in world space)
+		#target_offset += aircraft.global_transform.basis.y * (-acceleration.y * response_strength * 2)
+#
+		## Clamp the target offset to prevent excessive movement (in world space)
+		#target_offset.x = clamp(target_offset.x, -max_offset.x, max_offset.x)
+		#target_offset.y = clamp(target_offset.y, -max_offset.y, max_offset.y)
+		#target_offset.z = clamp(target_offset.z, -max_offset.z, max_offset.z)
+		#
+		#
+#
+	## Compute new world position
+	#var new_position = expected_position + target_offset
+#
+	## Smoothly interpolate towards the new world position
+	#global_position = global_position.lerp(new_position, delta * smooth_factor)
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6e71m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bqghx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vbahg"]
+
+[sub_resource type="AudioStream" id="AudioStream_iphpn"]
+
+[sub_resource type="AudioStream" id="AudioStream_5yjji"]
+
+[sub_resource type="AudioStream" id="AudioStream_2k065"]
+
+[sub_resource type="AudioStream" id="AudioStream_lwvfq"]
+
+[sub_resource type="GDScript" id="GDScript_8u3l2"]
+script/source = "extends Node2D
+
+var posVector: Vector2
+@export var deadzone = 15
+func _ready() -> void:
+	global_position = Vector2(1625,650)
+"
+
+[node name="AircraftController" type="Node3D"]
+script = ExtResource("1_oyw4e")
+
+[node name="Aircraft" type="RigidBody3D" parent="."]
+mass = 10.0
+script = ExtResource("2_aeuav")
+LiftFactor = 0.001
+LiftPointDistance = 1.5
+DragFactor = Vector3(0.45, 0.9, 0.003)
+DragPointDistance = 1.5
+DragHeatRate = 0.05
+RadiationCoolingRate = 1.2
+MachSpeedScaling = 0.85
+MaxTemperature = 1200.0
+EnableTemperatureCalculations = true
+AirDensity = 1.225
+AirTemperature = 15.0
+StartingVelocity = Vector3(0, 0, 0)
+
+[node name="f15" parent="Aircraft" instance=ExtResource("3_8r468")]
+script = ExtResource("4_gl2gx")
+
+[node name="CameraGimble" type="Node3D" parent="Aircraft"]
+script = ExtResource("4_fwx6w")
+
+[node name="Camera3D" type="Camera3D" parent="Aircraft/CameraGimble"]
+transform = Transform3D(1, 0, 0, 0, 0.997564, 0.0697565, 0, -0.0697565, 0.997564, 0, 5, 14)
+script = SubResource("GDScript_7xrac")
+response_strength = 0.75
+smooth_factor = 1.0
+max_offset = Vector3(1, 1, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, -8.156)
+shape = SubResource("CapsuleShape3D_6e71m")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_bqghx")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_vbahg")
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="Aircraft"]
+transform = Transform3D(1.5, 0, 0, 0, -6.55671e-08, 1.5, 0, -1.5, -6.55671e-08, 0, 0, 0)
+polygon = PackedVector2Array(-1.92111, -3.87787, -1.83137, 6.67976, 1.97495, 6.72965, 2.03183, -3.9063)
+
+[node name="F15EngineLeft" type="Node3D" parent="Aircraft"]
+script = ExtResource("5_uoviv")
+PowerFactor = 250.0
+EnginePosition = Vector3(0.75, 0, 5)
+EngineSoundLoop = ExtResource("7_jnvq8")
+EngineSoundStart = ExtResource("8_0t5uk")
+EngineSoundStop = SubResource("AudioStream_iphpn")
+EngineSoundIdle = ExtResource("7_jnvq8")
+EngineSoundLowPower = ExtResource("9_7jmpm")
+EngineSoundMidPower = ExtResource("10_y7yxa")
+EngineSoundHighPower = ExtResource("11_iijlg")
+FuelRate = 0.001
+
+[node name="F15EngineRight" type="Node3D" parent="Aircraft"]
+script = ExtResource("5_uoviv")
+PowerFactor = 250.0
+EnginePosition = Vector3(-0.75, 0, 5)
+EngineSoundLoop = SubResource("AudioStream_5yjji")
+EngineSoundStart = SubResource("AudioStream_2k065")
+EngineSoundStop = SubResource("AudioStream_lwvfq")
+FuelRate = 0.001
+
+[node name="AircraftModule_ControlEngine" type="Node" parent="Aircraft"]
+script = ExtResource("5_e5cr5")
+engine_spool_time = 60.0
+
+[node name="AircraftModule_EnergyContainer" type="Node" parent="Aircraft"]
+script = ExtResource("7_fnpwn")
+
+[node name="AircraftModule_ControlEnergyContainer" type="Node" parent="Aircraft"]
+script = ExtResource("8_840ax")
+
+[node name="AircraftModule_ControlSteering" type="Node" parent="Aircraft"]
+script = ExtResource("10_jj6sy")
+g_limit = 100.0
+elevator_mul = 1.05
+
+[node name="AircraftModule_Steering" type="Node" parent="Aircraft"]
+script = ExtResource("11_u5c3s")
+PowerFactor = 3.0
+XPointDistance = 3.5
+YPointDistance = 1.2
+ZPointDistance = 4.2
+FuelRate = 0.1
+
+[node name="HUD" type="CanvasLayer" parent="Aircraft"]
+script = ExtResource("11_160yp")
+
+[node name="Control" type="Control" parent="Aircraft/HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Joystick" parent="Aircraft/HUD/Control" instance=ExtResource("11_d8jlw")]
+position = Vector2(932, 401)
+scale = Vector2(0.5, 0.5)
+script = SubResource("GDScript_8u3l2")
+
+[node name="SpeedLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 66.0
+offset_right = 181.0
+offset_bottom = 89.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="AltitudeLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 114.0
+offset_top = 94.0
+offset_right = 182.0
+offset_bottom = 117.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="HeadingLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 114.0
+offset_top = 147.0
+offset_right = 182.0
+offset_bottom = 170.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="ThrustLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 114.0
+offset_top = 122.0
+offset_right = 182.0
+offset_bottom = 145.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="PitchLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 114.0
+offset_top = 173.0
+offset_right = 182.0
+offset_bottom = 196.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="RollLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 196.0
+offset_right = 181.0
+offset_bottom = 219.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="GForceLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 114.0
+offset_top = 224.0
+offset_right = 182.0
+offset_bottom = 247.0
+text = "Test text"
+horizontal_alignment = 2
+
+[node name="MachLabel" type="Label" parent="Aircraft/HUD/Control"]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 247.0
+offset_right = 181.0
+offset_bottom = 270.0
+text = "Test text"
+horizontal_alignment = 2

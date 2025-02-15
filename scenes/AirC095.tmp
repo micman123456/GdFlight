@@ -1,0 +1,125 @@
+[gd_scene load_steps=24 format=3 uid="uid://ekr8uo8rj0xu"]
+
+[ext_resource type="PackedScene" uid="uid://ct3ysx8cm5a0m" path="res://scenes/f_15.tscn" id="1_k6fjo"]
+[ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/Aircraft/Aircraft.gd" id="2_aeuav"]
+[ext_resource type="Script" path="res://scenes/texture_rect.gd" id="3_f16lv"]
+[ext_resource type="Script" path="res://scenes/camera_gimble.gd" id="4_fwx6w"]
+[ext_resource type="Script" path="res://scenes/boresight.gd" id="4_oeif8"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlEngine.gd" id="5_e5cr5"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Engine/Engine.gd" id="5_uoviv"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/EnergyContainer/EnergyContainer.gd" id="7_fnpwn"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlEnergyContainer.gd" id="8_840ax"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Controls/ControlSteering.gd" id="10_jj6sy"]
+[ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Steering/Steering.gd" id="11_u5c3s"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_i0g6n"]
+
+[sub_resource type="GDScript" id="GDScript_7xrac"]
+script/source = "extends Camera3D
+
+
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6e71m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bqghx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vbahg"]
+
+[sub_resource type="AudioStream" id="AudioStream_4jawe"]
+
+[sub_resource type="AudioStream" id="AudioStream_5f68t"]
+
+[sub_resource type="AudioStream" id="AudioStream_tr1aa"]
+
+[sub_resource type="AudioStream" id="AudioStream_5yjji"]
+
+[sub_resource type="AudioStream" id="AudioStream_2k065"]
+
+[sub_resource type="AudioStream" id="AudioStream_lwvfq"]
+
+[node name="AircraftController" type="Node3D"]
+script = ExtResource("1_oyw4e")
+
+[node name="Aircraft" type="RigidBody3D" parent="."]
+script = ExtResource("2_aeuav")
+LiftFactor = 0.005
+
+[node name="HUD" type="Node3D" parent="Aircraft"]
+
+[node name="TextureRect" type="TextureRect" parent="Aircraft/HUD" node_paths=PackedStringArray("boresight", "camera")]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("CanvasTexture_i0g6n")
+script = ExtResource("3_f16lv")
+boresight = NodePath("../../Boresight")
+camera = NodePath("../../CameraGimble/Camera3D")
+
+[node name="Boresight" type="Node3D" parent="Aircraft" node_paths=PackedStringArray("aircraft")]
+script = ExtResource("4_oeif8")
+aircraft = NodePath("..")
+
+[node name="CameraGimble" type="Node3D" parent="Aircraft" node_paths=PackedStringArray("boresight", "camera")]
+script = ExtResource("4_fwx6w")
+boresight = NodePath("../Boresight")
+camera = NodePath("Camera3D")
+
+[node name="Camera3D" type="Camera3D" parent="Aircraft/CameraGimble"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 4, 12)
+script = SubResource("GDScript_7xrac")
+
+[node name="f15" parent="Aircraft" instance=ExtResource("1_k6fjo")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, -8.156)
+shape = SubResource("CapsuleShape3D_6e71m")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_bqghx")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Aircraft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -1.25, 1.5)
+shape = SubResource("CapsuleShape3D_vbahg")
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="Aircraft"]
+transform = Transform3D(1.5, 0, 0, 0, -6.55671e-08, 1.5, 0, -1.5, -6.55671e-08, 0, 0, 0)
+polygon = PackedVector2Array(-1.92111, -3.87787, -1.83137, 6.67976, 1.97495, 6.72965, 2.03183, -3.9063)
+
+[node name="F15EngineLeft" type="Node3D" parent="Aircraft"]
+script = ExtResource("5_uoviv")
+PowerFactor = 400.0
+EnginePosition = Vector3(0.75, 0, 5)
+EngineSoundLoop = SubResource("AudioStream_4jawe")
+EngineSoundStart = SubResource("AudioStream_5f68t")
+EngineSoundStop = SubResource("AudioStream_tr1aa")
+FuelRate = 0.001
+
+[node name="F15EngineRight" type="Node3D" parent="Aircraft"]
+script = ExtResource("5_uoviv")
+PowerFactor = 400.0
+EnginePosition = Vector3(-0.75, 0, 5)
+EngineSoundLoop = SubResource("AudioStream_5yjji")
+EngineSoundStart = SubResource("AudioStream_2k065")
+EngineSoundStop = SubResource("AudioStream_lwvfq")
+FuelRate = 0.001
+
+[node name="AircraftModule_ControlEngine" type="Node" parent="Aircraft"]
+script = ExtResource("5_e5cr5")
+
+[node name="AircraftModule_EnergyContainer" type="Node" parent="Aircraft"]
+script = ExtResource("7_fnpwn")
+
+[node name="AircraftModule_ControlEnergyContainer" type="Node" parent="Aircraft"]
+script = ExtResource("8_840ax")
+
+[node name="AircraftModule_ControlSteering" type="Node" parent="Aircraft"]
+script = ExtResource("10_jj6sy")
+
+[node name="AircraftModule_Steering" type="Node" parent="Aircraft"]
+script = ExtResource("11_u5c3s")
+
+[editable path="Aircraft/f15"]

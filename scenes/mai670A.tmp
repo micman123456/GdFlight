@@ -1,0 +1,109 @@
+[gd_scene load_steps=13 format=3 uid="uid://ypcc38fr8o4t"]
+
+[ext_resource type="PackedScene" uid="uid://ekr8uo8rj0xu" path="res://scenes/Aircraft.tscn" id="1_eo3la"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fr3in"]
+sky_top_color = Color(0.379004, 0.699653, 0.993328, 1)
+sky_horizon_color = Color(0.725206, 0.894518, 0.99342, 1)
+ground_bottom_color = Color(0.521821, 0.87842, 0.980352, 1)
+ground_horizon_color = Color(0.725206, 0.894518, 0.99342, 1)
+
+[sub_resource type="Sky" id="Sky_8kosg"]
+sky_material = SubResource("ProceduralSkyMaterial_fr3in")
+
+[sub_resource type="Environment" id="Environment_7vhdm"]
+background_mode = 2
+sky = SubResource("Sky_8kosg")
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5p4lq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dhofb"]
+size = Vector3(500, 1, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ia0ap"]
+albedo_color = Color(0.564214, 0.563614, 0.576231, 1)
+metallic = 0.12
+metallic_specular = 0.33
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_efmp7"]
+albedo_color = Color(0.27451, 0.286275, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ol7s8"]
+albedo_color = Color(0.281675, 0.731688, 0.457048, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_snx0g"]
+albedo_color = Color(0.879173, 0.000618191, 0.879279, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tlgy4"]
+albedo_color = Color(1, 1, 0.0117647, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1grsa"]
+albedo_color = Color(1, 0, 1, 1)
+
+[node name="World" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.1302, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7vhdm")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.680721, 0.732543, 3.20205e-08, 0, -4.37114e-08, 1, 0.732543, -0.680721, -2.97553e-08, 0, 0, 0)
+light_energy = 0.75
+shadow_enabled = true
+sky_mode = 1
+
+[node name="Floor" type="StaticBody3D" parent="."]
+physics_material_override = SubResource("PhysicsMaterial_5p4lq")
+
+[node name="FloorCollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 15, -240)
+shape = SubResource("BoxShape3D_dhofb")
+
+[node name="FloorCSGBox3D" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1495)
+size = Vector3(10000, 1, 10000)
+material = SubResource("StandardMaterial3D_ia0ap")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1448.07, 50, 1633.68)
+size = Vector3(100, 100, 100)
+material = SubResource("StandardMaterial3D_efmp7")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1416.04, 50, 558.548)
+size = Vector3(100, 100, 100)
+material = SubResource("StandardMaterial3D_ol7s8")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3215.25, 50, -268.517)
+size = Vector3(100, 100, 100)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1448.07, 50, -1404.29)
+size = Vector3(100, 100, 100)
+material = SubResource("StandardMaterial3D_snx0g")
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1672.52, 50, -1521.78)
+size = Vector3(100, 100, 100)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -224.45, 50, 111.901)
+size = Vector3(100, 100, 100)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3272.99, 50, -1552.13)
+size = Vector3(100, 100, 100)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2779.46, 50, 3575.56)
+size = Vector3(100, 100, 100)
+material = SubResource("StandardMaterial3D_tlgy4")
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 15, -240)
+size = Vector3(500, 1, 10)
+material = SubResource("StandardMaterial3D_1grsa")
+
+[node name="AircraftController" parent="." instance=ExtResource("1_eo3la")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.3186, 0)
