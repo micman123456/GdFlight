@@ -45,6 +45,11 @@ const EARTH_GRAVITY = 9.8 # for g-force calculation
 @export var AltitudeEnabled: bool = true
 @export var StartingVelocity: Vector3 = Vector3.FORWARD
 
+
+@export var Lift_Curve : Curve
+var Lift_Coeff = 0.0
+
+
 # Linear world is Godot default: reference Y axis is always UP, reference -Z axis is always NORTH
 # Spherical world is real life: away from reference origin is UP, reference Y axis is magnetic NORTH
 enum WorldTypes {
@@ -306,7 +311,7 @@ func prepare_physics_variables():
 	
 	
 	# Lift equation: https://www.grc.nasa.gov/www/k-12/airplane/lifteq.html
-	lift_intensity = LiftFactor * AirDensity * (AIR_DENSITY_RHO * forward_air_speed_squared)/2 # (rho * V^2)/2
+	lift_intensity = Lift_Coeff * LiftFactor * AirDensity * (AIR_DENSITY_RHO * forward_air_speed_squared)/2 # (rho * V^2)/2
 	
 	# Drag equation: https://www.grc.nasa.gov/www/k-12/airplane/drageq.html
 	drag_intensity_vector = Vector3(
@@ -387,7 +392,7 @@ func process_physics_frame(delta):
 	var weight_vector = Vector3.ZERO
 	if Gravity > 0:
 		var global_gravity_direction = to_global(local_gravity_direction) - global_transform.origin
-		weight_vector = global_gravity_direction * EARTH_GRAVITY * Gravity
+		weight_vector = global_gravity_direction * EARTH_GRAVITY * Gravity * mass
 		apply_central_force(weight_vector)
 	
 	# Load Factor and G-Force
@@ -510,6 +515,8 @@ func calulate_AOA():
 	return AngleOfAttack
 
 func update_lift_curve():
-	LiftFactor = LiftFactor + (aoa * 0.0001)
-	LiftFactor = clamp(LiftFactor,-0.005,0.005)
+	var aoa_clamped = clamp(aoa, -90, 90)
+	var curve_x = (aoa_clamped + 90.0) / 180.0
+	Lift_Coeff = Lift_Curve.sample(curve_x)
+	
 	
