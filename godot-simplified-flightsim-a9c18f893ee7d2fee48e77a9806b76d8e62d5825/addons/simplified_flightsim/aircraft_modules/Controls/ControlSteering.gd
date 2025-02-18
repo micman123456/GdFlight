@@ -178,7 +178,7 @@ func is_stalled() -> bool:
 	return (airspeed < stall_speed and abs(aoa) > critical_aoa and altitude > ground_clearance) or (airspeed<30 and altitude > ground_clearance)
 
 func _process(delta: float) -> void:
-	stall = is_stalled()
+	stall = false # will fix later
 	if stall:
 		input_disabled = true
 		_stall_protection(delta)

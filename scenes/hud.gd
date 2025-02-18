@@ -48,7 +48,7 @@ func _process(delta: float) -> void:
 		throttle_tick_controller()
 		compass()
 		update_velocity_vector()
-		headingLabel.text = "Heading: %.1f°" % rad_to_deg(aircraft.rotation.y)
+		headingLabel.text = "Heading: %.1f°" % rad_to_deg(aircraft.rotation.y) + "COL: %.1f°" % (aircraft.Lift_Coeff)
 		#thrustLabel.text = "Thrust: %.1f%%" % (aircraft_controls.thrustSetting * 100)
 		#pitchLabel.text = "Pitch: %.1f°" % rad_to_deg(aircraft.rotation.x)
 		#rollLabel.text = "Roll: %.1f°" % rad_to_deg(aircraft.rotation.z)

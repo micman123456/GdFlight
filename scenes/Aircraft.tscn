@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://ekr8uo8rj0xu"]
+[gd_scene load_steps=28 format=3 uid="uid://ekr8uo8rj0xu"]
 
 [ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
 [ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/Aircraft/Aircraft.gd" id="2_aeuav"]
@@ -18,6 +18,10 @@
 [ext_resource type="AudioStream" uid="uid://cqgwfk4scg5lr" path="res://entites/aircraft/sounds/high_power.ogg" id="11_iijlg"]
 [ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Steering/Steering.gd" id="11_u5c3s"]
 [ext_resource type="PackedScene" uid="uid://im5d68hujwed" path="res://scenes/hud.tscn" id="19_so5q0"]
+
+[sub_resource type="Curve" id="Curve_svu4o"]
+_data = [Vector2(0, 0.5), 0.0, -3.46743, 0, 0, Vector2(0.25, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 0.5), 2.90242, 2.90242, 0, 0, Vector2(0.75, 1), -5.6134e-07, -5.6134e-07, 0, 0, Vector2(1, 0.5), -4.00929, 0.0, 0, 0]
+point_count = 5
 
 [sub_resource type="GDScript" id="GDScript_7xrac"]
 script/source = "extends Camera3D
@@ -105,11 +109,11 @@ func _process(delta: float) -> void:
 script = ExtResource("1_oyw4e")
 
 [node name="Aircraft" type="RigidBody3D" parent="."]
-mass = 10.0
+mass = 1000.0
 script = ExtResource("2_aeuav")
-LiftFactor = 0.001
+LiftFactor = 0.2
 LiftPointDistance = 1.5
-DragFactor = Vector3(0.45, 0.9, 0.003)
+DragFactor = Vector3(4.5, 9, 0.003)
 DragPointDistance = 1.5
 DragHeatRate = 0.05
 RadiationCoolingRate = 1.2
@@ -119,6 +123,7 @@ EnableTemperatureCalculations = true
 AirDensity = 1.225
 AirTemperature = 15.0
 StartingVelocity = Vector3(0, 0, 0)
+Lift_Curve = SubResource("Curve_svu4o")
 
 [node name="f15" parent="Aircraft" instance=ExtResource("3_8r468")]
 script = ExtResource("4_gl2gx")
@@ -151,7 +156,7 @@ polygon = PackedVector2Array(-1.92111, -3.87787, -1.83137, 6.67976, 1.97495, 6.7
 
 [node name="F15EngineLeft" type="Node3D" parent="Aircraft"]
 script = ExtResource("5_uoviv")
-PowerFactor = 250.0
+PowerFactor = 35000.0
 EnginePosition = Vector3(0.75, 0, 5)
 EngineSoundLoop = ExtResource("7_jnvq8")
 EngineSoundStart = ExtResource("8_0t5uk")
@@ -164,7 +169,7 @@ FuelRate = 0.001
 
 [node name="F15EngineRight" type="Node3D" parent="Aircraft"]
 script = ExtResource("5_uoviv")
-PowerFactor = 250.0
+PowerFactor = 35000.0
 EnginePosition = Vector3(-0.75, 0, 5)
 EngineSoundLoop = SubResource("AudioStream_5yjji")
 EngineSoundStart = SubResource("AudioStream_2k065")
@@ -188,9 +193,9 @@ elevator_mul = 1.05
 
 [node name="AircraftModule_Steering" type="Node" parent="Aircraft"]
 script = ExtResource("11_u5c3s")
-PowerFactorEle = 4.0
-PowerFactorAil = 1.5
-PowerFactorRud = 2.0
+PowerFactorEle = 250.0
+PowerFactorAil = 150.0
+PowerFactorRud = 200.0
 XPointDistance = 3.5
 YPointDistance = 1.2
 ZPointDistance = 4.2
