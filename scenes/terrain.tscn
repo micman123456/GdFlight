@@ -1,0 +1,35 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4cfrj73vlnuk"]
+
+[ext_resource type="Shader" path="res://scenes/terrain.gdshader" id="1_jqv12"]
+[ext_resource type="Terrain3DAssets" uid="uid://l1iycrd4i43n" path="res://data_dir/assets.tres" id="2_hsrx8"]
+[ext_resource type="Terrain3DMaterial" uid="uid://dswf62otk1otq" path="res://data_dir/terrain.tres" id="3_lvmf8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xbqyw"]
+shader = ExtResource("1_jqv12")
+shader_parameter/skyColor = Color(0.462037, 0.644479, 0.991136, 1)
+shader_parameter/HColor = Color(0.306, 0.5337, 0.9, 1)
+
+[sub_resource type="Sky" id="Sky_uslw2"]
+sky_material = SubResource("ShaderMaterial_xbqyw")
+
+[sub_resource type="Environment" id="Environment_6slw1"]
+background_mode = 2
+background_energy_multiplier = 1.25
+sky = SubResource("Sky_uslw2")
+
+[node name="map" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.5, -2.18557e-08, 0, -4.37114e-08, 1, -0.5, 0.866025, 3.78552e-08, 0, 0, 0)
+light_energy = 0.75
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_6slw1")
+
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://data_dir"
+material = ExtResource("3_lvmf8")
+assets = ExtResource("2_hsrx8")
+top_level = true
+metadata/_edit_lock_ = true

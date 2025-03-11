@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GridSpawnInfo" load_steps=2 format=3 uid="uid://df7pqq6ouju5p"]
+
+[ext_resource type="Script" path="res://Resources/GridSpawnInfoScript.gd" id="1_128vm"]
+
+[resource]
+script = ExtResource("1_128vm")
+spawnPoints = Array[Vector2]([Vector2(0, 0), Vector2(-1, -1), Vector2(-1, 0), Vector2(-1, 1), Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(1, -1), Vector2(0, -1), Vector2(-3, -3), Vector2(-3, 0), Vector2(-3, 3), Vector2(0, 3), Vector2(3, 3), Vector2(3, 0), Vector2(3, -3), Vector2(0, -3)])
+subdivision = Array[int]([199, 99, 99, 99, 99, 99, 99, 99, 99, 0, 0, 0, 0, 0, 0, 0, 0])
+scale = Array[int]([1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3])

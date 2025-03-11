@@ -81,7 +81,9 @@ zoom_out={
 ]
 }
 
-[rendering]
+[shader_globals]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+ocean_pos={
+"type": "vec3",
+"value": Vector3(0, 0, 0)
+}

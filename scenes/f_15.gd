@@ -21,11 +21,13 @@ var ailerons_max = 105
 var ailerons_center = 90
 var ailerons_range: int = 15
 
-@export var LiftFactorFlap1: float = 0.0005
-@export var LiftFactorFlap2: float = 0.001
+@export var LiftFactorFlap1: float = 0.025
+@export var LiftFactorFlap2: float = 0.05
 
 @export var DragFactorFlap1: float = 0.005
 @export var DragFactorFlap2: float = 0.01
+
+@export var DragFactorAB: float = 0.1
 
 # Flap Settings
 @export_range(0, 2) var flaps_setting: int
@@ -42,6 +44,8 @@ var ailerons_range: int = 15
 
 @onready var LeftAileron = $LeftAileron
 @onready var RightAileron = $RightAileron
+
+@onready var Airbrake = $Airbrake
 
 
 # Default Pos for Components
@@ -83,6 +87,12 @@ var R_target_ailerons_angle: float = 0  # Target angle for the ailerons
 var R_ailerons_speed: float = 30.0  # Speed of the ailerons movement
 var R_AileronsMoving: bool = false
 
+var Airbrake_Current_angle: float = 90
+var Airbrake_target_angle: float = 70
+var Airbrake_Speeed = 30.0
+var AirbrakeMoving : bool = false
+var AirbrakeDeployed : bool = false
+
 
 func _ready():
 	var steering_module = get_parent().find_child("AircraftModule_Steering")
@@ -112,7 +122,10 @@ func _process(delta: float) -> void:
 		UpdateThrottlePosition(0.025)
 
 	if Input.is_action_pressed("Throttle_Down"):
-		UpdateThrottlePosition(-0.05)
+		UpdateThrottlePosition(-0.025)
+		ToggleAirbrake(true)
+	else:
+		ToggleAirbrake(false)
 
 
 	# Update movements
@@ -132,6 +145,8 @@ func _process(delta: float) -> void:
 		MoveRightAileron(delta)
 	else:
 		resetRoll()
+	if AirbrakeMoving:
+		MoveAirbrake(delta)
 		
 
 
@@ -276,9 +291,32 @@ func MoveRightAileron(delta: float):
 	if abs(R_ailerons_current_angle - R_target_ailerons_angle) < 0.1:
 		R_ailerons_current_angle = R_target_ailerons_angle
 		R_AileronsMoving = false
+		
+func MoveAirbrake(delta):
+	if abs(Airbrake_Current_angle - Airbrake_target_angle) < 0.1:
+		Airbrake_Current_angle = Airbrake_target_angle
+		AirbrakeMoving = false
+		return
+	Airbrake_Current_angle = lerp(Airbrake_Current_angle,Airbrake_target_angle,Airbrake_Speeed*delta)
+	Airbrake.rotation_degrees.x = Airbrake_Current_angle
+
+
+func ToggleAirbrake(on : bool):
+	if (on):
+		Airbrake_target_angle = 70
+		#aircraft.DragFactor.z = aircraftBaseDragFactor.z + DragFactorAB
+	
+	else:
+		Airbrake_target_angle = 90
+		#aircraft.DragFactor.z = aircraftBaseDragFactor.z
+		
+	AirbrakeMoving = true
+	
 
 func UpdateThrottlePosition(input : float):
-	thrustSetting+=input
-	thrustSetting = clamp(thrustSetting, 0, 1)
+	var newSetting = thrustSetting+input
+	thrustSetting = clamp(newSetting, 0, 1)
+	
+
 	
 	

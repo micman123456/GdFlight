@@ -16,9 +16,15 @@ const RATIO_OF_SPECIFIC_HEATS = 1.4 # for dry air at 300K
 const SPEED_OF_SOUND = 343.0 # mach 1
 const EARTH_GRAVITY = 9.8 # for g-force calculation
 
+
+
 # Lift factor combines lift coefficient and wing area
 # Must be higher than DragFactor.z or the plane won't take off
+@export var MovementScaler: float = 1.0
 @export var LiftFactor: float = 0.03
+@export var LiftFactorYaw: float = 0.03
+@export var yaw_damping_coefficient: float = 0.03
+
 @export var LiftPointDistance: float = 0.0 # meters ahead of center of mass
 
 # Drag factor combines drag coefficient and reference area
@@ -48,7 +54,7 @@ const EARTH_GRAVITY = 9.8 # for g-force calculation
 
 @export var Lift_Curve : Curve
 var Lift_Coeff = 0.0
-
+var Lift_Coeff_Yaw = 0.0
 
 # Linear world is Godot default: reference Y axis is always UP, reference -Z axis is always NORTH
 # Spherical world is real life: away from reference origin is UP, reference Y axis is magnetic NORTH
@@ -74,6 +80,7 @@ var air_velocity_squared = 0.0
 var mach_speed = 0.0
 var forward_air_speed = 0.0
 var lift_intensity = 0.0
+var lift_intensity_yaw = 0.0
 var drag_intensity_vector = Vector3.ZERO
 var local_gravity_direction = Vector3.DOWN
 var local_altitude = 0.0
@@ -84,12 +91,14 @@ var local_temperature = AirTemperature # Celsius
 var local_load_factor = 1.0
 var local_g_force = 1.0
 var aoa = 0
+var aoay = 0
 
 var touching_shapes = []
 var is_safe_touching = false
 var is_unsafe_touching = false
 var is_velocity_nonzero = false
 var is_stalled = false
+var no_physics_mode = false
 
 ##############################################################################
 #  SYSTEM SETUP
@@ -150,6 +159,8 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 	if not world_ref:
+		return
+	if no_physics_mode:
 		return
 	
 	
@@ -312,6 +323,7 @@ func prepare_physics_variables():
 	
 	# Lift equation: https://www.grc.nasa.gov/www/k-12/airplane/lifteq.html
 	lift_intensity = Lift_Coeff * LiftFactor * AirDensity * (AIR_DENSITY_RHO * forward_air_speed_squared)/2 # (rho * V^2)/2
+	lift_intensity_yaw = Lift_Coeff_Yaw * LiftFactorYaw * AirDensity * (AIR_DENSITY_RHO * forward_air_speed_squared)/2 
 	
 	# Drag equation: https://www.grc.nasa.gov/www/k-12/airplane/drageq.html
 	drag_intensity_vector = Vector3(
@@ -319,6 +331,12 @@ func prepare_physics_variables():
 		sign(-air_velocity_vector.y) * DragFactor.y * (AIR_DENSITY_RHO * air_velocity_vector.y*air_velocity_vector.y)/2,
 		sign(-air_velocity_vector.z) * DragFactor.z * (AIR_DENSITY_RHO * air_velocity_vector.z*air_velocity_vector.z)/2
 	) * AirDensity
+	
+	aoa = calulate_AOA()
+	aoay = calulate_AOA_yaw()
+	update_lift_curve()
+	update_lift_curve_yaw()
+
 
 
 
@@ -327,19 +345,32 @@ func process_physics_frame(delta):
 	# This method is called in physics process, after modules
 	# Process passive forces (lift, drag, heat, collision)
 	
+	
+	
 	var up_vector = global_transform.basis.y # roof of plane on global frame
 	var forward_vector = -global_transform.basis.z # nose of plane in global frame
 	var right_vector = global_transform.basis.x # right wing of plane in global frame
-	
+
 	# Both are in global coordinates
 	var linear_acceleration = (linear_velocity - last_linear_velocity) / delta if last_linear_velocity != null else Vector3.ZERO
 	var angular_acceleration = (angular_velocity - last_angular_velocity) / delta if last_angular_velocity != null else Vector3.ZERO
+	angular_acceleration *= 0.25
+	
+	linear_acceleration = linear_acceleration
+	angular_acceleration = angular_acceleration
 	
 	# ================
 	# LIFT
 	
 	var lift_vector = up_vector * lift_intensity
+	var yaw_damping = -angular_velocity.y * yaw_damping_coefficient
+	var lift_vector_yaw = -right_vector * lift_intensity_yaw * yaw_damping
+	
+	var tail_offset = -forward_vector * LiftPointDistance
+	
 	apply_force(lift_vector, forward_vector * LiftPointDistance)
+	apply_force(lift_vector_yaw, tail_offset)
+	
 	
 	
 	# ================
@@ -351,7 +382,7 @@ func process_physics_frame(delta):
 	# Apply drag
 	apply_force(drag_vec_global_rotation, -forward_vector * DragPointDistance)
 	
-	angular_damp = 1.0 + ((drag_intensity_vector.length_squared())*0.01)*AirDensity
+	angular_damp = 1.0 + ((drag_intensity_vector.length_squared())*0.05)*AirDensity
 	
 	# ================
 	# HEAT
@@ -444,12 +475,20 @@ func process_physics_frame(delta):
 		angular_velocity = Vector3.ZERO
 		emit_signal("crashed", ang_vel)
 	
+	if(last_linear_velocity):
+		if(is_crashed(last_linear_velocity,linear_velocity,global_position.y)):
+			no_physics_mode = true
+			emit_signal("crashed", linear_velocity)
+	
+	
 	last_linear_velocity = linear_velocity
 	last_angular_velocity = angular_velocity
 	_process_frame_count += 1
+	# Apply movement at half speed
+	global_transform.origin += (linear_velocity * delta) * 0.5
 
-	aoa = calulate_AOA()
-	update_lift_curve()
+	
+	
 
 
 func request_energy(energy_type: String, amount: float) -> bool:
@@ -514,9 +553,34 @@ func calulate_AOA():
 	var AngleOfAttack = rad_to_deg(atan2(-LocalVelocity.y, -LocalVelocity.z))
 	return AngleOfAttack
 
+func calulate_AOA_yaw():
+	var inv_rotation = global_transform.basis.orthonormalized().inverse()
+	var LocalVelocity = inv_rotation * linear_velocity
+	var AngleOfAttackYaw = rad_to_deg(atan2(-LocalVelocity.x, -LocalVelocity.z))
+
 func update_lift_curve():
 	var aoa_clamped = clamp(aoa, -90, 90)
 	var curve_x = (aoa_clamped + 90.0) / 180.0
 	Lift_Coeff = Lift_Curve.sample(curve_x)
-	
+
+func update_lift_curve_yaw():
+	var aoa_clamped = clamp(aoa, -90, 90)
+	var curve_x = (aoa_clamped + 90.0) / 180.0
+	Lift_Coeff_Yaw = Lift_Curve.sample(curve_x)
+
+
+func is_crashed(prev_velocity:Vector3,velocity:Vector3,Alt:float):
+	if(Alt < 74):
+		print("Crashed -> Low alt")
+		return true
+	var velocity_differnce = prev_velocity-velocity
+	if abs(velocity_differnce.x) > 100:
+		print("Crashed -> Forceful impact")
+		return true
+	if abs(velocity_differnce.y) > 100:
+		print("Crashed -> Forceful impact")
+		return true
+	if abs(velocity_differnce.z) > 100:
+		print("Crashed -> Forceful impact")
+		return true
 	

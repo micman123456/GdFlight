@@ -18,6 +18,7 @@ var input_disabled : bool = false
 var input_disabled_frame_counter : int = 0
 
 var stall : bool = false
+var autopilot : bool = false
 
 
 # Axis values (-1 to 1 range)
@@ -53,6 +54,7 @@ func receive_input(event):
 
 
 func _handle_input():
+	
 	var key_axis_x = 0.0
 	var key_axis_y = 0.0
 	var key_axis_z = 0.0
@@ -71,6 +73,9 @@ func _handle_input():
 		key_axis_y += 0.05
 	if Input.is_key_pressed(KEY_E):
 		key_axis_y -= 0.05
+		
+	if Input.is_key_pressed(KEY_0):
+		autopilot = !autopilot
 
 	# Joystick Input (if no keyboard input for that axis)
 	#axis_x = key_axis_x if key_axis_x != 0.0 else joystick.posVector.y
@@ -155,11 +160,40 @@ func auto_stab_pitch(delta: float):
 
 	steering_module.set_x(axis_x)  # Apply to the module
 
-		
+
+func _autopilot(delta):
+	if (!autopilot):
+		return
+	# pitch
+	var pitch = aircraft.rotation.x
+	var pitch_tolerance = deg_to_rad(0.05)
+	var pitch_rate = 20.0
 	
-	steering_module.set_x(axis_x)
+	if abs(pitch) < pitch_tolerance:
+		axis_x = 0.0
+	else:
+		var pitch_target = -pitch * 2.5  # Scale appropriately for control input
+		axis_x = lerp(axis_x, pitch_target, delta * pitch_rate)
 
+	steering_module.set_x(axis_x) 
+	
+	# roll
+	var roll = aircraft.rotation.z
+	var roll_tolerance = deg_to_rad(0.05)
+	var roll_rate = 30
+	
 
+	if abs(roll) < roll_tolerance:
+		axis_z = 0.0
+	elif roll > 0:
+		axis_z = lerp(axis_z, roll, delta * roll_rate)  
+	else:
+		axis_z = lerp(axis_z, roll, delta * roll_rate)
+
+	steering_module.set_z(axis_z)  
+
+	
+	
 
 func _stall_protection(delta: float):
 		auto_stab_roll(delta)
@@ -177,7 +211,7 @@ func is_stalled() -> bool:
 
 	return (airspeed < stall_speed and abs(aoa) > critical_aoa and altitude > ground_clearance) or (airspeed<30 and altitude > ground_clearance)
 
-func _process(delta: float) -> void:
+func _process(delta: float) -> void:	
 	stall = false # will fix later
 	if stall:
 		input_disabled = true
@@ -192,8 +226,7 @@ func _process(delta: float) -> void:
 				input_disabled_frame_counter = 0
 		else:
 			_handle_input()
+			_autopilot(delta)
 			if auto_stab_frame_counter > 60:
 				auto_stab_roll(delta)
 				
-
-		

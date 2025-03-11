@@ -1,0 +1,50 @@
+[gd_scene load_steps=9 format=3 uid="uid://ypcc38fr8o4t"]
+
+[ext_resource type="Texture2D" uid="uid://cm74l7fihf6hq" path="res://entites/background/syferfontein_0d_clear_puresky_8k.hdr" id="1_0qcfk"]
+[ext_resource type="PackedScene" uid="uid://ekr8uo8rj0xu" path="res://scenes/Aircraft.tscn" id="1_eo3la"]
+[ext_resource type="PackedScene" uid="uid://dl70n6hejqwal" path="res://scenes/ocean.tscn" id="3_cf0qg"]
+[ext_resource type="Script" path="res://scenes/ground.gd" id="5_iq5sy"]
+[ext_resource type="PackedScene" uid="uid://b7orajgpanbbn" path="res://scenes/ground.tscn" id="5_syjit"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hnk54"]
+sky_top_color = Color(0.098703, 0.252259, 0.464881, 1)
+sky_horizon_color = Color(0.717813, 0.781692, 0.849554, 1)
+sky_cover = ExtResource("1_0qcfk")
+sky_cover_modulate = Color(0.27741, 0.312056, 0.708667, 1)
+ground_bottom_color = Color(0.290196, 0.447059, 0.67451, 1)
+ground_horizon_color = Color(0.789932, 0.784975, 0.923141, 1)
+ground_curve = 0.0373215
+energy_multiplier = 0.75
+
+[sub_resource type="Sky" id="Sky_48jwn"]
+sky_material = SubResource("ProceduralSkyMaterial_hnk54")
+
+[sub_resource type="Environment" id="Environment_vdxk6"]
+background_mode = 2
+sky = SubResource("Sky_48jwn")
+tonemap_mode = 2
+glow_enabled = true
+fog_enabled = true
+fog_density = 0.0
+fog_sky_affect = 0.25
+fog_depth_curve = 21.1121
+
+[node name="World" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.1302, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vdxk6")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.492404, 0.0868241, 0, 0.173648, 0.984808, -0.5, 0.852868, -0.150384, 0, 0, 0)
+shadow_enabled = true
+
+[node name="AircraftController" parent="." instance=ExtResource("1_eo3la")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2503.84, 349.609, 0)
+
+[node name="Ocean" parent="." instance=ExtResource("3_cf0qg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2503.84, 173.054, 0)
+visible = false
+
+[node name="Floor" parent="." instance=ExtResource("5_syjit")]
+script = ExtResource("5_iq5sy")
