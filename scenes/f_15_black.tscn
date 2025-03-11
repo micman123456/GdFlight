@@ -1,11 +1,52 @@
-[gd_scene load_steps=3 format=3 uid="uid://vvpavsm26ah3"]
+[gd_scene load_steps=11 format=3 uid="uid://vvpavsm26ah3"]
 
-[ext_resource type="PackedScene" uid="uid://e4toonhcca7k" path="res://f15_black.glb" id="1_3cpkb"]
+[ext_resource type="PackedScene" uid="uid://cs25q2e33yob8" path="res://f15_black.glb" id="1_3cpkb"]
+[ext_resource type="Script" path="res://scenes/afterburner.gd" id="2_2b8kd"]
+[ext_resource type="Texture2D" uid="uid://br2lgc5ngb2m6" path="res://assets/textures/Tornado1.png" id="2_rnamt"]
 
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_g1f1m"]
 albedo_color = Color(1, 1, 1, 0.537255)
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ufs3n"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t2a1d"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.996078, 0.741176, 0.372549, 0.156863)
+grow_amount = 0.015
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_c1vd0"]
+lightmap_size_hint = Vector2i(5, 5)
+size = Vector2(0.75, 0.75)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pfh8f"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_rnamt")
+grow = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beod2"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.996078, 0.741176, 0.372549, 0.745098)
+grow = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_84j0e"]
+material = SubResource("StandardMaterial3D_beod2")
+top_radius = 0.1
+bottom_radius = 0.325
+height = 1.0
+
 [node name="f15_black" instance=ExtResource("1_3cpkb")]
+
+[node name="Engines" parent="." index="4"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.486441, -3.18326)
 
 [node name="LeftAileron" parent="." index="6"]
 transform = Transform3D(0.906308, 0.422618, -1.84732e-08, 0, -4.37114e-08, -1, -0.422618, 0.906308, -3.9616e-08, -4.76966, 0.158952, 2.09523)
@@ -15,3 +56,40 @@ transform = Transform3D(0.906308, -0.422618, 1.84732e-08, 0, -4.37114e-08, -1, 0
 
 [node name="Canopy" parent="." index="15"]
 surface_material_override/0 = SubResource("ORMMaterial3D_g1f1m")
+
+[node name="Airbrake" parent="." index="16"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.82473, -3.48151)
+
+[node name="RightEngineFire" type="MeshInstance3D" parent="." index="21"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.7, 0, 5.2)
+mesh = SubResource("CapsuleMesh_ufs3n")
+surface_material_override/0 = SubResource("StandardMaterial3D_t2a1d")
+script = ExtResource("2_2b8kd")
+max_rad = 0.333
+max_height = 1.25
+min_height = 0.55
+
+[node name="LeftEngineFire" type="MeshInstance3D" parent="." index="22"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.7, 0, 5.2)
+mesh = SubResource("CapsuleMesh_ufs3n")
+surface_material_override/0 = SubResource("StandardMaterial3D_t2a1d")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="23"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.7, -0.05, 5.011)
+mesh = SubResource("PlaneMesh_c1vd0")
+surface_material_override/0 = SubResource("StandardMaterial3D_pfh8f")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." index="24"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.7, -0.05, 5)
+mesh = SubResource("PlaneMesh_c1vd0")
+surface_material_override/0 = SubResource("StandardMaterial3D_pfh8f")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." index="25"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.678962, -0.0442988, 5.79467)
+visible = false
+mesh = SubResource("CylinderMesh_84j0e")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." index="26"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.679, -0.044, 5.795)
+visible = false
+mesh = SubResource("CylinderMesh_84j0e")

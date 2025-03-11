@@ -272,3 +272,16 @@ func engine_increase_power(step: float):
 	var new_value = clamp(current_power + step, 0.0, 1.0)
 	if new_value != current_power:
 		engine_set_power(new_value)
+
+func cut_audio():
+	sfx_engine_high.volume_db = -40
+	sfx_engine_mid.volume_db = -40
+	sfx_engine_low.volume_db = -40
+	sfx_engine_idle.volume_db = -40
+	
+func play_audio():
+	sfx_engine_high.volume_db = 0
+	sfx_engine_mid.volume_db = 0
+	sfx_engine_low.volume_db = 0
+	sfx_engine_idle.volume_db = 0
+	

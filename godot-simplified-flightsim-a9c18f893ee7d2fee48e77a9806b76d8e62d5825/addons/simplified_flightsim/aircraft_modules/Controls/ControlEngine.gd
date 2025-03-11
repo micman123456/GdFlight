@@ -39,7 +39,7 @@ func setup(aircraft_node):
 	else:
 		engine_modules = aircraft.find_modules_by_type("engine")
 	print("engines found: %s" % str(engine_modules))
-	#send_to_engines("engine_start")
+	send_to_engines("engine_start")
 
 func receive_input(event):
 	if not ControlActive:

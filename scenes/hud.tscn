@@ -262,3 +262,21 @@ texture = ExtResource("5_pkp55")
 modulate = Color(0.184314, 0.968627, 0.156863, 1)
 scale = Vector2(0.15, 0.15)
 texture = ExtResource("6_we2rh")
+
+[node name="AutoCont" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.319444
+anchor_top = 0.641975
+anchor_right = 0.365451
+anchor_bottom = 0.649691
+offset_top = -14.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="AutoLab" type="Label" parent="AutoCont"]
+modulate = Color(0.184314, 0.968627, 0.156863, 1)
+layout_mode = 2
+text = "Auto"

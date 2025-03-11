@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://ekr8uo8rj0xu"]
+[gd_scene load_steps=33 format=3 uid="uid://ekr8uo8rj0xu"]
 
 [ext_resource type="Script" path="res://scenes/aircraft.gd" id="1_oyw4e"]
 [ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/Aircraft/Aircraft.gd" id="2_aeuav"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://scenes/hud.gd" id="11_160yp"]
 [ext_resource type="AudioStream" uid="uid://cqgwfk4scg5lr" path="res://entites/aircraft/sounds/high_power.ogg" id="11_iijlg"]
 [ext_resource type="Script" path="res://godot-simplified-flightsim-a9c18f893ee7d2fee48e77a9806b76d8e62d5825/addons/simplified_flightsim/aircraft_modules/Steering/Steering.gd" id="11_u5c3s"]
+[ext_resource type="PackedScene" uid="uid://b1ksalo4jl8w5" path="res://scenes/explosion.tscn" id="19_asgsb"]
 [ext_resource type="PackedScene" uid="uid://im5d68hujwed" path="res://scenes/hud.tscn" id="19_so5q0"]
 
 [sub_resource type="Curve" id="Curve_svu4o"]
@@ -36,59 +37,28 @@ var target_offset: Vector3 = Vector3.ZERO
 var expected_position: Vector3  
 var i = 0
 
+var isfrozen : bool = false
+var freezePosition : Vector3 
+
 @onready var aircraft = $\"../../\"  
 @onready var gimbal = $\"..\"
 @onready var control = $\"../../AircraftModule_ControlSteering\"
 
 func _ready():
-	expected_position = gimbal.global_position + gimbal.global_transform.basis * Vector3(0, 7, 20)  # Use world basis
+	expected_position = gimbal.global_position + gimbal.global_transform.basis * Vector3(0, 4, 13)  # Use world basis
 
 func _process(delta: float) -> void:
-	pass
-	#if not aircraft or not gimbal:
-		#return
-		#
-	#var pitch_movement = control.axis_x
-	#var yaw_movement = control.axis_y
-#
-	#expected_position = gimbal.global_position + gimbal.global_transform.basis * Vector3(0, 7, 20)
-#
-	## Get aircraft velocity and acceleration
-	#var current_velocity = aircraft.linear_velocity
-	#var acceleration = (current_velocity - velocity) / delta
-	#velocity = current_velocity
-	#
-#
-	## Check if acceleration is above threshold, if not, return to expected position
-	#if acceleration.length() < acceleration_threshold:
-		#
-		#target_offset = target_offset.lerp(Vector3.ZERO, delta * smooth_factor * 2)
-		 #
-	#else:
-		#
-		#target_offset = Vector3.ZERO
-#
-		## Move forward/backward based on acceleration (Z-axis in world space)
-		#target_offset += aircraft.global_transform.basis.z * (acceleration.z * response_strength)
-		#
-		## Move left/right based on yaw momentum (X-axis in world space)
-		#target_offset += aircraft.global_transform.basis.x * (-acceleration.x * response_strength * 5)
-#
-		## Move up/down slightly based on pitch momentum (Y-axis in world space)
-		#target_offset += aircraft.global_transform.basis.y * (-acceleration.y * response_strength * 2)
-#
-		## Clamp the target offset to prevent excessive movement (in world space)
-		#target_offset.x = clamp(target_offset.x, -max_offset.x, max_offset.x)
-		#target_offset.y = clamp(target_offset.y, -max_offset.y, max_offset.y)
-		#target_offset.z = clamp(target_offset.z, -max_offset.z, max_offset.z)
-		#
-		#
-#
-	## Compute new world position
-	#var new_position = expected_position + target_offset
-#
-	## Smoothly interpolate towards the new world position
-	#global_position = global_position.lerp(new_position, delta * smooth_factor)
+	if (isfrozen):
+		global_position = freezePosition
+	
+
+func freeze():
+	isfrozen = true
+	freezePosition = global_position
+
+func unfreeze():
+	global_position = expected_position
+	isfrozen = false
 "
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6e71m"]
@@ -96,6 +66,8 @@ func _process(delta: float) -> void:
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bqghx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vbahg"]
+
+[sub_resource type="AudioStream" id="AudioStream_k2r37"]
 
 [sub_resource type="AudioStream" id="AudioStream_iphpn"]
 
@@ -105,13 +77,210 @@ func _process(delta: float) -> void:
 
 [sub_resource type="AudioStream" id="AudioStream_lwvfq"]
 
+[sub_resource type="Animation" id="Animation_vgo18"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("f15:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/path = NodePath("Explosion:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("F15EngineLeft")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_audio"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CameraGimble/Camera3D:current")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraGimble/Camera3D")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"unfreeze"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../Overlay/ColorRect:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Overlay/ColorRect:self_modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_1dtox"]
+resource_name = "crash_anim"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("f15:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Explosion")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.0666667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_explosion"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Explosion:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.0333334, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("F15EngineLeft")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 3.93333),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"cut_audio"
+}, {
+"args": [],
+"method": &"play_audio"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraGimble/Camera3D")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"freeze"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../Overlay/ColorRect:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.33333, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Overlay/ColorRect:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.33333, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_k44dq"]
+_data = {
+"RESET": SubResource("Animation_vgo18"),
+"crash_anim": SubResource("Animation_1dtox")
+}
+
 [node name="AircraftController" type="Node3D"]
 script = ExtResource("1_oyw4e")
 
 [node name="Aircraft" type="RigidBody3D" parent="."]
-mass = 1000.0
+mass = 500.0
 script = ExtResource("2_aeuav")
-LiftFactor = 0.2
+MovementScaler = 0.0
+LiftFactor = 0.15
+LiftFactorYaw = 0.1
+yaw_damping_coefficient = 0.5
 LiftPointDistance = 1.5
 DragFactor = Vector3(4.5, 9, 0.003)
 DragPointDistance = 1.5
@@ -122,7 +291,7 @@ MaxTemperature = 1200.0
 EnableTemperatureCalculations = true
 AirDensity = 1.225
 AirTemperature = 15.0
-StartingVelocity = Vector3(0, 0, 0)
+StartingVelocity = Vector3(200, 0, 0)
 Lift_Curve = SubResource("Curve_svu4o")
 
 [node name="f15" parent="Aircraft" instance=ExtResource("3_8r468")]
@@ -132,7 +301,10 @@ script = ExtResource("4_gl2gx")
 script = ExtResource("4_fwx6w")
 
 [node name="Camera3D" type="Camera3D" parent="Aircraft/CameraGimble"]
-transform = Transform3D(1, 0, 0, 0, 0.997564, 0.0697565, 0, -0.0697565, 0.997564, 0, 5, 14)
+transform = Transform3D(1, 0, 0, 0, 0.997564, 0.0697565, 0, -0.0697565, 0.997564, 0, 4, 13)
+current = true
+fov = 70.0
+far = 20000.0
 script = SubResource("GDScript_7xrac")
 response_strength = 0.75
 smooth_factor = 1.0
@@ -156,9 +328,9 @@ polygon = PackedVector2Array(-1.92111, -3.87787, -1.83137, 6.67976, 1.97495, 6.7
 
 [node name="F15EngineLeft" type="Node3D" parent="Aircraft"]
 script = ExtResource("5_uoviv")
-PowerFactor = 35000.0
+PowerFactor = 15000.0
 EnginePosition = Vector3(0.75, 0, 5)
-EngineSoundLoop = ExtResource("7_jnvq8")
+EngineSoundLoop = SubResource("AudioStream_k2r37")
 EngineSoundStart = ExtResource("8_0t5uk")
 EngineSoundStop = SubResource("AudioStream_iphpn")
 EngineSoundIdle = ExtResource("7_jnvq8")
@@ -169,7 +341,7 @@ FuelRate = 0.001
 
 [node name="F15EngineRight" type="Node3D" parent="Aircraft"]
 script = ExtResource("5_uoviv")
-PowerFactor = 35000.0
+PowerFactor = 15000.0
 EnginePosition = Vector3(-0.75, 0, 5)
 EngineSoundLoop = SubResource("AudioStream_5yjji")
 EngineSoundStart = SubResource("AudioStream_2k065")
@@ -193,9 +365,9 @@ elevator_mul = 1.05
 
 [node name="AircraftModule_Steering" type="Node" parent="Aircraft"]
 script = ExtResource("11_u5c3s")
-PowerFactorEle = 250.0
-PowerFactorAil = 150.0
-PowerFactorRud = 200.0
+PowerFactorEle = 200.0
+PowerFactorAil = 100.0
+PowerFactorRud = 150.0
 XPointDistance = 3.5
 YPointDistance = 1.2
 ZPointDistance = 4.2
@@ -205,3 +377,24 @@ FuelRate = 0.1
 script = ExtResource("11_160yp")
 
 [node name="HUD" parent="Aircraft/HUD" instance=ExtResource("19_so5q0")]
+anchors_preset = -1
+
+[node name="Explosion" parent="Aircraft" instance=ExtResource("19_asgsb")]
+transform = Transform3D(1000, 0, 0, 0, 1000, 0, 0, 0, 1000, -0.0413895, 3.40562, -1.1409)
+visible = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Aircraft"]
+libraries = {
+"": SubResource("AnimationLibrary_k44dq")
+}
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="Overlay"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true

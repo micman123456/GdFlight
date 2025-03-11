@@ -16,6 +16,8 @@ enum SteeringTypes {
 @export var PowerFactorEle: float = 1.0
 @export var PowerFactorAil: float = 1.0
 @export var PowerFactorRud: float = 1.0
+var PowerFactorScale: float = 1.0
+
 
 
 # Elevator distance from center
@@ -85,8 +87,10 @@ func process_physic_frame(delta):
 			else:
 				energy_failed = false
 		
-		var force_vector_right = -aircraft.global_transform.basis.y * PowerFactorAil * axis_z * 0.5
-		var force_vector_left = aircraft.global_transform.basis.y * PowerFactorAil * axis_z * 0.5
+		
+		var Ail_Force = PowerFactorScale*PowerFactorAil
+		var force_vector_right = -aircraft.global_transform.basis.y * Ail_Force * axis_z * 0.5
+		var force_vector_left = aircraft.global_transform.basis.y * Ail_Force * axis_z * 0.5
 		
 		# Internally this is always a thruster. If mode is air/passive, it is
 		# simply modulated by air density and speed
@@ -116,8 +120,9 @@ func process_physic_frame(delta):
 			else:
 				energy_failed = false
 		
-		var force_vector_up = -aircraft.global_transform.basis.y * PowerFactorEle * axis_x * 0.5
-		var force_vector_down = aircraft.global_transform.basis.y * PowerFactorEle * axis_x * 0.5
+		var Elevator_Force = PowerFactorScale*PowerFactorEle
+		var force_vector_up = -aircraft.global_transform.basis.y * Elevator_Force * axis_x * 0.5
+		var force_vector_down = aircraft.global_transform.basis.y * Elevator_Force * axis_x * 0.5
 			
 		# Internally this is always a thruster. If mode is air/passive, it is
 		# simply modulated by air density and speed
@@ -146,8 +151,9 @@ func process_physic_frame(delta):
 			else:
 				energy_failed = false
 			
-		var force_vector_rleft = -aircraft.global_transform.basis.x * PowerFactorRud * axis_y * 0.5
-		var force_vector_rright = aircraft.global_transform.basis.x * PowerFactorRud * axis_y * 0.5
+		var Rudder_Force = PowerFactorScale*PowerFactorRud
+		var force_vector_rleft = -aircraft.global_transform.basis.x * Rudder_Force * axis_y * 0.5
+		var force_vector_rright = aircraft.global_transform.basis.x * Rudder_Force * axis_y * 0.5
 			
 		# Internally this is always a thruster. If mode is air/passive, it is
 		# simply modulated by air density and speed
@@ -175,10 +181,12 @@ func set_z(value: float):
 	axis_z = value
 	request_update_interface()
 
-func set_power_from_speed():
-	if (aircraft.forward_air_speed>200):
-		PowerFactor = 3
-	elif (aircraft.forward_air_speed>100):
-		PowerFactor = 3.5
+# Scale the power factor with speed to simulate airflow over control surfaces
+
+func scale_power_factor():
+	
+	if (aircraft.forward_air_speed<120):
+		PowerFactorScale = 1.0
 	else:
-		PowerFactor = 4.0
+		var scaled = (150/aircraft.forward_air_speed)
+		PowerFactorScale = clamp(scaled,0.5,1.0)

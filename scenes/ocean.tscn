@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dl70n6hejqwal"]
+
+[ext_resource type="Script" path="res://scenes/ocean.gd" id="1_xlph1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y2y1m"]
+size = Vector3(100, 1, 100)
+
+[node name="Ocean" type="Node3D"]
+script = ExtResource("1_xlph1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+shape = SubResource("BoxShape3D_y2y1m")

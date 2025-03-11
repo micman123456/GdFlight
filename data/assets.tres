@@ -1,0 +1,37 @@
+[gd_resource type="Terrain3DAssets" load_steps=9 format=3 uid="uid://c1ioc35y2a4ee"]
+
+[ext_resource type="PackedScene" uid="uid://bwvtgwartxt0g" path="res://assets/models/RockB.tscn" id="1_ydmac"]
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_a5u5r"]
+name = "RockB"
+density = 0.029499
+scene_file = ExtResource("1_ydmac")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_shg2s"]
+load_path = "res://.godot/imported/rock030_alb_ht.png-c841db18b37aa5c942943cffad123dc2.bptc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gwecw"]
+load_path = "res://.godot/imported/rock030_nrm_rgh.png-f372ae26829f66919317068d636f6985.bptc.ctex"
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_mup2f"]
+name = "Rock"
+albedo_color = Color(0.921735, 0.916068, 0.906632, 1)
+albedo_texture = SubResource("CompressedTexture2D_shg2s")
+normal_texture = SubResource("CompressedTexture2D_gwecw")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_lqse3"]
+load_path = "res://.godot/imported/ground037_alb_ht.png-587e922b9c8fcab3f2d4050ac005b844.bptc.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3i42o"]
+load_path = "res://.godot/imported/ground037_nrm_rgh.png-6815d522079724ff9e191de06a20875a.bptc.ctex"
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_od0q7"]
+name = "Grass"
+id = 1
+albedo_color = Color(0.54, 0.75, 0.5715, 1)
+albedo_texture = SubResource("CompressedTexture2D_lqse3")
+normal_texture = SubResource("CompressedTexture2D_3i42o")
+
+[resource]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_a5u5r")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_mup2f"), SubResource("Terrain3DTextureAsset_od0q7")])

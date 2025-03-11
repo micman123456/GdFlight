@@ -4,9 +4,11 @@ extends CanvasLayer
 @onready var aircraft_controls = $"../f15"
 @onready var speedLabel = $HUD/SpeedCont/Speed
 @onready var altitudeLabel = $HUD/Alt_Con/Alt
+@onready var steering = $"../AircraftModule_ControlSteering"
 @onready var Left_Throttle_Tick = $HUD/HBoxContainer3/Label/Throttle_Left
 @onready var HUD = $HUD
 @onready var Heading_Tick = $HUD/Compass
+@onready var autopilotLabel = $HUD/AutoCont/AutoLab
 
 @onready var camera = $"../CameraGimble/Camera3D"
 @onready var compass_left_tick = $HUD/Compass/compass_label_l1
@@ -26,8 +28,9 @@ extends CanvasLayer
 #@onready var rollLabel = $Control/RollLabel
 #@onready var gForceLabel = $Control/GForceLabel
 #@onready var machLabel = $Control/MachLabel
-#@onready var steering = $"../AircraftModule_ControlSteering"
+
 const tftab = ["False", "True"]
+const autoText = ["", "AUTO"]
 const Headings = ["N","E","S","W"]
 var headingPointer = 0
 var prev_heading = 0
@@ -49,11 +52,12 @@ func _process(delta: float) -> void:
 		compass()
 		update_velocity_vector()
 		headingLabel.text = "Heading: %.1f°" % rad_to_deg(aircraft.rotation.y) + "COL: %.1f°" % (aircraft.Lift_Coeff)
+		autopilotLabel.text = autoText[int(steering.autopilot)]
 		#thrustLabel.text = "Thrust: %.1f%%" % (aircraft_controls.thrustSetting * 100)
 		#pitchLabel.text = "Pitch: %.1f°" % rad_to_deg(aircraft.rotation.x)
 		#rollLabel.text = "Roll: %.1f°" % rad_to_deg(aircraft.rotation.z)
 		#gForceLabel.text = "LiftF: %.5f " % (aircraft.LiftFactor)
-		#var string = tftab[int(steering.input_disabled)]
+		
 		#machLabel.text = "AOA %.1f°" % (aircraft.aoa)
 
 func compass():
